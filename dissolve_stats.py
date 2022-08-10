@@ -275,12 +275,16 @@ class DissolveWithStats:
     
     # removes fields from the output which mustn't be kept, and set the other field values
     def setAttributes(self, selectedLayer, listKeep, outFile, dicNewValues, dissolveField):
-        # get indexes of fields to be deleted
-        listIndexesDel = [i for i in range(len(listKeep)) if listKeep[i] == 0]
         # get layer, provider and provider capabilities
         outputLayer = QgsVectorLayer(outFile, "name", "ogr")
         provider = outputLayer.dataProvider()
         caps = provider.capabilities()
+        # get output layer fields names
+        fields = outputLayer.fields().names()
+        # get indexes of fields to be deleted
+        listIndexesDel = [i for i in range(len(listKeep)) if listKeep[i] == 0]
+        if fields[0] == "fid":
+            listIndexesDel = [0] + list(map(lambda x: x+1, listIndexesDel))
         # delete fields to be deleted
         if caps & QgsVectorDataProvider.DeleteAttributes:
             provider.deleteAttributes(listIndexesDel)
