@@ -243,6 +243,8 @@ class DissolveWithStats:
             dicNewValues[key] = dict((k, []) for k in listFieldNames)
         # for each kept field
         for i,field in enumerate(listFieldNames):
+            if len(field) > 10 and outFile.split(".")[-1] == "shp":
+                raise Exception("Shapefiles do not support field names longer than 10 characters")
             if listKeep[i] == 2:
                 # get field values, i.e. ['44','33','40']
                 valuesField = [feature[i] for feature in attrs]
